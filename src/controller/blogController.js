@@ -9,7 +9,9 @@ const createBlog = async function (req, res) {
     if (Object.keys(data).length != 0) {
       let authorId = data.authorId;  //taking author id from request body
       // taking data in post body and creating new blog 
-      let validAuthorId = await authorModel.find(data);
+
+     // let validAuthorId = await authorModel.find(data);
+
       //if no author id present in request body
       if (!authorId)
         return res.status(400).send({ msg: "authorId is require" });
@@ -19,8 +21,8 @@ const createBlog = async function (req, res) {
         if (!validAuthor) return res.status(400).send({ msg: " authorId is not valid" });
       }
       //
-      if (!validAuthorId)
-        return res.status(400).send({ msg: "authorId is not valid" });
+      // if (!validAuthorId)
+      //   return res.status(400).send({ msg: "authorId is not valid 001" });
       let savedData = await blogModel.create(data);
       res.status(201).send({ msg: savedData });
     } else {
@@ -75,6 +77,7 @@ let UpdateBlog = async function (req, res) {
         //checking if the values given in the body are array or not
         if(data.subcategory.constructor != Array || data.tags.constructor!= Array )
         return res.status(400).send({status:false, msg:"subcategory and tags should be array of string"})
+        //going to blogmodel and updating data
         let updatedBlog = await blogModel.findByIdAndUpdate(blogId, data, {
           new: true,
 
@@ -85,7 +88,7 @@ let UpdateBlog = async function (req, res) {
       return res.status(400).send({ msg: "invalid request" });
     }
   } catch (error) {
-    return res.status(400).send(error.message);
+    return res.status(500).send(error.message);
   }
 };
 
@@ -93,8 +96,10 @@ let UpdateBlog = async function (req, res) {
 
 let deleteBlog = async function (req, res) {
   try {
+    //taking blogId in params and saving in variable id
     let id = req.params.blogId;
     let blogId = await blogModel.findById(id);
+    //
     let deleteId = blogId.isDeleted;
     if (!blogId)
       return res.status(400).send({ status: false, msg: "blog Id not found" });
@@ -132,6 +137,9 @@ catch (err) {
      res.status(500).send({ error: err.message })
 }
 }
+
+
+
 
 
 
