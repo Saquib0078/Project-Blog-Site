@@ -18,18 +18,20 @@ try{
 }
 
 const authorise =async function(req, res, next) {
-    try {
+    // try {
       let token = req.headers["x-api-key"]
       let decodeToken = jwt.verify(token,"blog-site-project-01")
       
-      let userToBeModified = req.params.authorId
-      let userLoggedIn = decodeToken.authorId
-      if(userLoggedIn != userToBeModified)
+      let userToBeModified = req.params.blogId
+      let userLoggedIn = await blogModel.findById(userToBeModified)
+    //   console.log(result)
+       userLoggedIn.authorId = decodeToken.authorId
+      if(userLoggedIn.authorId != decodeToken.authorId)
       return res.status(400).send({status:false, msg:"you are not authorize for changes"})
       next()
-    } catch (error) {
-        return res.status(400).send(error.message);
-    }
+    // } catch (error) {
+    //     return res.status(400).send(error.message);
+    // }
    
 } 
 
