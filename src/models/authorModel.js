@@ -1,47 +1,57 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
-
-
-const authorSchema = new mongoose.Schema({
-
-   fname: {
+const authorSchema = new mongoose.Schema(
+  {
+    fname: {
       type: String,
       required: true,
-      trim: true
-   },
-   lname: {
+      trim: true,
+      validate(value) {
+         if (!validator.isAlpha(value)) {
+           throw new Error("fname is not valid");
+         }
+       },
+    },
+    lname: {
       type: String,
       required: true,
-      trim: true
-   },
-   title: {
-
+      trim: true,
+      validate(value) {
+         if (!validator.isAlpha(value)) {
+           throw new Error("Lname is not valid");
+         }
+       },
+    },
+    title: {
       required: true,
       type: String,
       enum: ["Mr", "Mrs", "Miss"],
-      trim: true
-   },
-   email: {
+      trim: true,
+    },
+    email: {
       type: String,
       trim: true,
       lowercase: true,
       unique: true,
-      validate: {
-         validator: function (v) {
-            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
-         },
-         message: "Please enter a valid email"
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("email is Invalid");
+        }
       },
-      required: [true, "Email required"]
-   },
-   
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      validate(value) {
+         if (!validator.isStrongPassword(value)) {
+           throw new Error("password must contain : minLength:8 minLowercase:1 minUppercase:1 minNumbers:1 minSymbols:1");
+         }
+       },
+    },
+  },
+  { timestamps: true }
+);
 
-   password: {
-   type: String,
-    required: true,
-   trim: true
-} 
-
-}, { timestamps: true });
-
-module.exports = mongoose.model('NewAuthor', authorSchema)
+module.exports = mongoose.model("NewAuthor", authorSchema);

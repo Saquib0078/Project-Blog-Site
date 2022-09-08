@@ -1,8 +1,12 @@
 const authorModel=require("../models/authorModel.js")
 const jwt = require("jsonwebtoken")
+
+
+
+
+// create author ---------------------------------------
 const createAuthor= async function (req,res){
-   
-   try {
+    try {
     let data =req.body
     if(Object.keys(data).length != 0 ){
     let validateEmail = data.email
@@ -16,10 +20,12 @@ const createAuthor= async function (req,res){
     res.status(201).send ({msg: savedData})
    }  else  {
        return res.status(400).send({msg: "invalid request"}) }}
-    catch{
-        res.status(400).send({error:"Server Not Found"})
+    catch (error){
+        res.status(400).send(error.message)
     }
 }
+
+
 
 
 // login ----------------------------------------------------------------------
