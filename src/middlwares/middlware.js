@@ -1,72 +1,80 @@
-const jwt = require("jsonwebtoken")
-const authorModel = require("../models/authorModel.js");
-const blogModel = require("../models/BlogModel.js")
+const jwt = require("jsonwebtoken");
+const BlogModel = require('../models/BlogModel');
 
+//*********AUTHENTICATION**********/
 
+const authenticate = async function(req,res,next){
 
-const authenticate = function(req, res, next) {
-try{
-    let token = req.headers["x-api-key"]
-    if(!token) return res.status(400).send({status:false, msg:"token is needed"})
-   let validToken = jwt.verify(token,"blog-site-project-01")
-    if (!validToken) return res.status(400).send({status: false, msg: "token is Invalid"}) 
-    next()
-} catch(error) {
-    return res.status(400).send(error.message);
-}
-
-}
-
-const authorise =async function(req, res, next) {
-    try {
-      let token = req.headers["x-api-key"]
-      let decodeToken = jwt.verify(token,"blog-site-project-01")
-      
-      let userToBeModified = req.params.blogId
-      let userLoggedIn = await blogModel.findById(userToBeModified)
-    //   console.log(result)
-       userLoggedIn.authorId = decodeToken.authorId
-      if( userLoggedIn.authorId != decodeToken.authorId
- )
-      return res.status(400).send({status:false, msg:"you are not authorize for changes"})
-      next()
-    } catch (error) {
-        return res.status(400).send(error.message);
+    const token = req.headers["x-api-key"];
+    
+    if(!token){
+        return res
+            .status(400)
+            .send({msg:"please provide token"});
     }
-   
-} 
+
+    try{
+        const decodedToken = jwt.verify(token, "blog-site-project-01");
+
+        if(!decodedToken)
+        return res
+            .status(401)
+            .send({status:false, msg:"invalid token"});
+        
+        //adding a decodedToken as a property inside request object so that could be accessed in other handler and middleware of same api
+
+        req.decodedToken = decodedToken;
+
+        next();
+    }catch(error){
+
+        res
+            .status(500)
+            .send({error: error.message})
+
+    }
+
+};
+
+//************AUTHORIZATION***********/
+
+const authorise = async function (req,res,next){
+    try{
+
+        const blogId = req.params["blogId"];
+        const decodedToken = req.decodedToken;
+
+        const blogByBlogId = await BlogModel.findOne({
+            _id: blogId,
+            isDeleted: false,
+            deletedAt: null,
+        });
+
+        if(!blogByBlogId){
+            return res
+                .status(404)
+                .send({status:false, message:`no blogs found by ${blogId}`});
+        }
+
+        if(decodedToken.authorId != blogByBlogId.authorId){
+            return res
+                .status(403)
+                .send({status:false , message:"unauthorize access"});
+        }
+
+        next();
+
+    }catch(error){
+
+        res
+            .status(500)
+            .send({error: error.message})
+
+    }
+}
 
 
-    
+//**********EXPORTING BOTH MIDDLEWARE FUNCTION******** */
+
 module.exports.authenticate = authenticate
-module.exports.authorise = authorise
-
-
-
-
-
-
-
-
-// const authenticate = function(req, res, next) {
-// let token = req.headers["x-api-key"]
-//     if(!token) return res.status(400).send({status:false, msg:"token is needed"})
-// let validToken = jwt.verify(token,"blog-site-project-01")
-//     if (!validToken) return res.status(400).send({status: false, msg: "token is Invalid"}) 
-//     req.decodedToken=validToken
-// res.headers["x-api-key",token]
-//  next()
-// }
-
-
-// const authorise = function(req, res, next) {
-
-// req.id =  req.params.blogId;
-// let loginUser = req.decodedToken.authorId
-// if(loginUser != req.id) return res.status(403).send({status:false, msg: "not authorize"})
-
-//  next()
-// }
-    
-// module.exports.authenticate = authenticate
-// module.exports.authorise = authorise
+module.exports.authorise=authorise

@@ -70,13 +70,8 @@ let UpdateBlog = async function (req, res) {
       let getDeletedBlogs = findBlogId.isDeleted;
 
       if (getDeletedBlogs)
-        return res
-          .status(400)
-          .send({ status: false, msg: "blog is already deleted" });
+        return res.status(400).send({ status: false, msg: "blog is already deleted" });
       else {
-        //checking if the values given in the body are array or not
-        if(data.subcategory.constructor != Array || data.tags.constructor!= Array )
-        return res.status(400).send({status:false, msg:"subcategory and tags should be array of string"})
         //going to blogmodel and updating data
         let updatedBlog = await blogModel.findByIdAndUpdate(blogId, data, {
           new: true,

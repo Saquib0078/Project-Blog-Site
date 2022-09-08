@@ -43,7 +43,7 @@ const loginUser = async function(req,res){
         if(!validUser) return res.status(400).send({msg:"email and password is requires"})
          if(Object.keys(validUser).length != 0){
           // using Jwt package and creating the unique token with secret key
-            let token = jwt.sign({UserId: "validUser._id".toString()},"blog-site-project-01")
+            let token = jwt.sign({authorId: validUser._id.toString()},"blog-site-project-01")
            return res.status(201).send({status:true, msg:token})
             
          } else {
