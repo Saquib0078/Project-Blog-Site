@@ -10,8 +10,8 @@ router.post("/authors",authorController.createAuthor)
 router.post("/blog",midd.authenticate,blogController.createBlog)
 router.get("/getAllBlog",midd.authenticate,blogController.getAllBlog)
 router.put("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.UpdateBlog)
-router.delete("/blogs/:blogId",midd.authenticate,blogController.deleteBlog)
-router.delete("/blogs",midd.authenticate,blogController.deleteBlogs)
+router.delete("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.deleteBlog)
+router.delete("/blogs",midd.authenticate,midd.authorise,blogController.deleteBlogs)
 router.post("/login",authorController.loginUser)
 
 
