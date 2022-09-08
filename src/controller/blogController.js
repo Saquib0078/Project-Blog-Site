@@ -64,10 +64,13 @@ let getBlog = async function (req, res) {
           .status(400)
           .send({ status: false, msg: "blog is already deleted" });
       else {
+        if(data.subcategory.constructor != Array || data.tags.constructor!= Array )
+        return res.status(400).send({status:false, msg:"subcategory and tags should be array of string"})
         let updatedBlog = await blogModel.findByIdAndUpdate(blogId, data, {
           new: true,
+
         });
-        res.status(200).send({ status: true, msg: updatedBlog });
+       return res.status(200).send({ status: true, msg: updatedBlog });
       }
     } else {
       return res.status(400).send({ msg: "invalid request" });
@@ -108,7 +111,7 @@ let deleteBlogs = async function (req, res) {
     if (Object.keys(queryParams).length == 0)
         return res.status(400).send({ status: false, msg: "Please enter some data in the body" });
 
-    const blog = await blogModel.find({ $and: [queryParams, { isDeleted: false }, { isPublished: true }] });
+    const blog = await blogModel.find({ $and: [...queryParams, { isDeleted: false }, { isPublished: true }] });
 
     if (blog.isDeleted == true || blog.length == 0)
         return res.status(404).send({msg: "Document is already Deleted "})
@@ -122,7 +125,27 @@ catch (err) {
 }
 
 
-
+// let deleteBlogs = async function(req, res){
+//   try{
+//   let data = req.query
+//   let filter = {...data}
+//   if(!data) 
+//   return res.status(404).send({status:false, msg:"no data found"})
+//   let blogValidation = await blogModel.findOne(filter)
+//   if(!blogValidation)
+//   return res.status(404).send({status:false, msg: "blog does not exist"})
+//   if(blogValidation.isDeleted == true)
+//   return res.status(404).send({status:false, msg: "blog is already deleted"})
+//  if(blogValidation.isDeleted == false){
+//   let idList = blogValidation._id
+//   console.log(idList)
+//   let deletion = await blogModel.findOneAndUpdate(filter,{$set:{isDeleted:true, deletedAt: moment().formate()}})
+//   return res.status(200).send({status: true, msg:"Blog is deleted successfully"})
+//  }
+//   } catch(error){
+//     return res.status(400).send({ error: "Server Not Found" });
+//   }
+// }
 
 
 module.exports.createBlog = createBlog;
