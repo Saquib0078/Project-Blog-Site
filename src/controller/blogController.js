@@ -7,14 +7,18 @@ const createBlog = async function (req, res) {
     
     let data = req.body;
     if (Object.keys(data).length != 0) {
-      let authorId = data.authorId;
+      let authorId = data.authorId;  //taking author id from request body
+      // taking data in post body and creating new blog 
       let validAuthorId = await authorModel.find(data);
+      //if no author id present in request body
       if (!authorId)
         return res.status(400).send({ msg: "authorId is require" });
       else {
-        let a = await authorModel.findOne({ _id: authorId });
-        if (!a) return res.status(400).send({ msg: " authorId is not valid" });
+        //finding author in database and validating id
+        let validAuthor = await authorModel.findOne({ _id: authorId });
+        if (!validAuthor) return res.status(400).send({ msg: " authorId is not valid" });
       }
+      //
       if (!validAuthorId)
         return res.status(400).send({ msg: "authorId is not valid" });
       let savedData = await blogModel.create(data);
@@ -33,37 +37,42 @@ const createBlog = async function (req, res) {
 let getAllBlog = async function (req, res) {
   try {
     let data = req.query;
+    // finding the values in Db and populating document with author details
     let getBlogs = await blogModel
       .find({ isPublished: true, isDeleted: false, ...data })
       .populate("authorId");
-
     res.status(201).send({ msg: getBlogs });
+    //checking if we are getting some documents from the database in response
     if (getBlogs.length == 0)
       return res.status(404).send({ msg: "no such blog exist" });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(500).send(error.message);
   }
 };
 
 // put Blogs |----------------------------------------------------------------
 
-let getBlog = async function (req, res) {
+let UpdateBlog = async function (req, res) {
   try {
     let data = req.body;
 
     if (Object.keys(data).length != 0) {
+     // taking blogId as input and saving it inside a variable
       let blogId = req.params.blogId;
+      //finding blogId inside Db
       let findBlogId = await blogModel.findById(blogId);
       if (!blogId)
         return res
-          .status(400)
+          .status(404)
           .send({ status: false, msg: "no such BlogId exists" });
-      let a = findBlogId.isDeleted;
-      if (a)
+      let getDeletedBlogs = findBlogId.isDeleted;
+
+      if (getDeletedBlogs)
         return res
           .status(400)
           .send({ status: false, msg: "blog is already deleted" });
       else {
+        //checking if the values given in the body are array or not
         if(data.subcategory.constructor != Array || data.tags.constructor!= Array )
         return res.status(400).send({status:false, msg:"subcategory and tags should be array of string"})
         let updatedBlog = await blogModel.findByIdAndUpdate(blogId, data, {
@@ -125,31 +134,11 @@ catch (err) {
 }
 
 
-// let deleteBlogs = async function(req, res){
-//   try{
-//   let data = req.query
-//   let filter = {...data}
-//   if(!data) 
-//   return res.status(404).send({status:false, msg:"no data found"})
-//   let blogValidation = await blogModel.findOne(filter)
-//   if(!blogValidation)
-//   return res.status(404).send({status:false, msg: "blog does not exist"})
-//   if(blogValidation.isDeleted == true)
-//   return res.status(404).send({status:false, msg: "blog is already deleted"})
-//  if(blogValidation.isDeleted == false){
-//   let idList = blogValidation._id
-//   console.log(idList)
-//   let deletion = await blogModel.findOneAndUpdate(filter,{$set:{isDeleted:true, deletedAt: moment().formate()}})
-//   return res.status(200).send({status: true, msg:"Blog is deleted successfully"})
-//  }
-//   } catch(error){
-//     return res.status(400).send({ error: "Server Not Found" });
-//   }
-// }
+
 
 
 module.exports.createBlog = createBlog;
 module.exports.getAllBlog = getAllBlog;
-module.exports.getBlog = getBlog;
+module.exports.UpdateBlog = UpdateBlog;
 module.exports.deleteBlog = deleteBlog;
 module.exports.deleteBlogs = deleteBlogs;
