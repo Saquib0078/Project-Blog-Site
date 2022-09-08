@@ -17,23 +17,39 @@ try{
 
 }
 
-const authorise =async function(req, res, next) {
-    try {
-      let token = req.headers["x-api-key"]
-      let decodeToken = jwt.verify(token,"blog-site-project-01")
+// const authorise =async function(req, res, next) {
+//     try {
+//       let token = req.headers["x-api-key"]
+//       let decodeToken = jwt.verify(token,"blog-site-project-01") 
       
-      let userToBeModified = req.params.authorId
-      let userLoggedIn = decodeToken.authorId
-      if(userLoggedIn != userToBeModified)
-      return res.status(400).send({status:false, msg:"you are not authorize for changes"})
-      next()
-    } catch (error) {
-        return res.status(400).send(error.message);
-    }
+//       let userToBeModified = req.params.authorId
+//       let userLoggedIn = decodeToken.authorId
+//       if(userLoggedIn != userToBeModified)
+//       return res.status(400).send({status:false, msg:"you are not authorize for changes"})
+//       next()
+//     } catch (error) {
+//         return res.status(400).send(error.message);
+//     }
    
-} 
+// } 
+const authorise =async function(req, res, next) {
+try{
+    let token = req.headers["x-api-key"];
+    
+if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
+let decodedToken = jwt.verify(token, "blog-site-project-01");
+let userTobeModified =req.query.authorId
+let userLoggedIn = decodedToken.authorId
 
-
+if (!decodedToken)
+   return res.status(401).send({ status: false, msg: "token is invalid" });
+   if(userTobeModified != userLoggedIn) return res.status(403).send({status:false,msg:"You are not Authorized"})
+   
+   next()
+  }catch(error){
+    res.status(500).send({msg: error.message})
+  }
+}
     
 module.exports.authenticate = authenticate
 module.exports.authorise = authorise
