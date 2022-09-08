@@ -1,9 +1,7 @@
 const jwt = require("jsonwebtoken")
 const authorModel = require("../models/authorModel.js");
 const blogModel = require("../models/BlogModel.js")
-const auth = function(){
-   
-}
+
 
 
 

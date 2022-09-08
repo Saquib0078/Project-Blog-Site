@@ -40,6 +40,7 @@ const loginUser = async function(req,res){
         let password = data.password
         //Going to authormodel and checking inside the database that if email and password exists
         let validUser = await authorModel.findOne({email:UserId, password:password})
+        if(!validUser) return res.status(400).send({msg:"email and password is requires"})
          if(Object.keys(validUser).length != 0){
           // using Jwt package and creating the unique token with secret key
             let token = jwt.sign({UserId: validUser._id.toString()},"blog-site-project-01")
