@@ -24,7 +24,8 @@ const authorise =async function(req, res, next) {
     try {
       let token = req.headers["x-api-key"]
       let decodeToken = jwt.verify(token,"blog-site-project-01")
-      let userToBeModified = req.params.blogId
+      
+      let userToBeModified = req.params.authorId
       let userLoggedIn = decodeToken.authorId
       if(userLoggedIn != userToBeModified)
       return res.status(400).send({status:false, msg:"you are not authorize for changes"})

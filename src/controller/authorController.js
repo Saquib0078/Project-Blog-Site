@@ -13,9 +13,9 @@ const createAuthor= async function (req,res){
     if(!validateEmail)
     return res.status(400).send({msg: "Email is require"})
     
-    let uniqueEmail = await authorModel.findOne({email: data.email})
-    if(uniqueEmail)
-    return res.status(400).send({msg: "email is not unique" })
+    // let uniqueEmail = await authorModel.findOne({email: data.email})
+    // if(uniqueEmail)
+    // return res.status(400).send({msg: "email is not unique" })
     let savedData=await authorModel.create(data)
     res.status(201).send ({msg: savedData})
    }  else  {
