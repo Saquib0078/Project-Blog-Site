@@ -24,10 +24,7 @@ const authorise =async function(req, res, next) {
       
       let userToBeModified = req.params.blogId
       let userLoggedIn = await blogModel.findById(userToBeModified)
-    //   console.log(result)
-       userLoggedIn.authorId = decodeToken.authorId
-      if( userLoggedIn.authorId != decodeToken.authorId
- )
+      if( userLoggedIn.authorId != decodeToken.authorId )
       return res.status(400).send({status:false, msg:"you are not authorize for changes"})
       next()
     } catch (error) {
