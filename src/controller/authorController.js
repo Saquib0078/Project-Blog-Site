@@ -29,33 +29,64 @@ const createAuthor= async function (req,res){
 
 // login ----------------------------------------------------------------------
 
-const loginUser = async function(req,res){
-    try {
-      let data = req.body
-      // getting email and password in request body and checking if its not empty
-      if(Object.keys(data) != 0 && data.email && data.password)
-      {
+// const loginUser = async function(req,res){
+//     try {
+//       let data = req.body
+//       // getting email and password in request body and checking if its not empty
+//       if(Object.keys(data) != 0 && data.email && data.password)
+//       {
       
-        let UserId = data.email
-        let password = data.password
-        //Going to authormodel and checking inside the database that if email and password exists
-        let validUser = await authorModel.findOne({email:UserId, password:password})
-        if(!validUser) return res.status(400).send({msg:"please check your email or password that you enter"})
-         if(Object.keys(validUser).length != 0){
-          // using Jwt package and creating the unique token with secret key
-            let token = jwt.sign({UserId: "validUser._id".toString()},"blog-site-project-01")
-           return res.status(201).send({status:true, msg:token})
+//         let UserId = data.email
+//         let password = data.password
+//         //Going to authormodel and checking inside the database that if email and password exists
+//         let validUser = await authorModel.findOne({email:UserId, password:password})
+//         if(!validUser) return res.status(400).send({msg:"please check your email or password that you enter"})
+//          if(Object.keys(validUser).length != 0){
+//           // using Jwt package and creating the unique token with secret key
+//             let token = jwt.sign({UserId: "validUser._id".toString()},"blog-site-project-01")
+//            return res.status(201).send({status:true, msg:token})
             
-         } else {
-             return res.status(404).send({status:false, msg: "user not found"})
-         }
-      }else {
-      return res.status(400).send({status:false, msg:"Request body must not be empty"})
+//          } else {
+//              return res.status(404).send({status:false, msg: "user not found"})
+//          }
+//       }else {
+//       return res.status(400).send({status:false, msg:"Request body must not be empty"})
      
-      }
-    } catch (error) {
-      res.status(500).send(error.message);
+//       }
+//     } catch (error) {
+//       res.status(500).send(error.message);
+//     }
+//   }
+
+const loginUser = async function(req,res){
+  try {
+    let data = req.body
+    // getting email and password in request body and checking if its not empty
+    if(Object.keys(data) != 0 && data.email && data.password)
+    {
+    
+      let UserId = data.email
+      let password = data.password
+      //Going to authormodel and checking inside the database that if email and password exists
+      let validUser = await authorModel.findOne({email:UserId, password:password})
+      if(!validUser) return res.status(400).send({msg:"email and password is requires"})
+       if(Object.keys(validUser).length != 0){
+        // using Jwt package and creating the unique token with secret key
+          let token = jwt.sign({authorId: validUser._id.toString()},"blog-site-project-01")
+         return res.status(201).send({status:true, msg:token})
+          
+       } else {
+           return res.status(404).send({status:false, msg: "user not found"})
+       }
+    }else {
+    return res.status(400).send({status:false, msg:"Request body must not be empty"})
+   
     }
+  } catch (error) {
+    res.status(500).send(error.message);
   }
+}
+
+
 module.exports.createAuthor=createAuthor
 module.exports.loginUser = loginUser
