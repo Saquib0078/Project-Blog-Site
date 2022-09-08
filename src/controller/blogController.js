@@ -17,7 +17,7 @@ const createBlog = async function (req, res) {
         return res.status(400).send({ msg: "authorId is require" });
       else {
         //finding author in database and validating id
-        let validAuthor = await authorModel.findOne({ _id: authorId });
+        let validAuthor = await authorModel.findOne({ _id: authorId }); 
         if (!validAuthor) return res.status(400).send({ msg: " authorId is not valid" });
       }
       //
@@ -40,9 +40,7 @@ let getAllBlog = async function (req, res) {
   try {
     let data = req.query;
     // finding the values in Db and populating document with author details
-    let getBlogs = await blogModel
-      .find({ isPublished: true, isDeleted: false, ...data })
-      .populate("authorId");
+    let getBlogs = await blogModel.find({ isPublished: true, isDeleted: false, ...data }).populate("authorId");
     res.status(201).send({ msg: getBlogs });
     //checking if we are getting some documents from the database in response
     if (getBlogs.length == 0)

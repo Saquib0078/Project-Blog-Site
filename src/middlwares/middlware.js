@@ -73,8 +73,5 @@ const authorise = async function (req,res,next){
     }
 }
 
-
-//**********EXPORTING BOTH MIDDLEWARE FUNCTION******** */
-
 module.exports.authenticate = authenticate
 module.exports.authorise=authorise
