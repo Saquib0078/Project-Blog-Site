@@ -5,13 +5,19 @@ const authorController= require("../controller/authorController.js")
 const blogController=require("../controller/blogController.js")
 const midd = require("../middlwares/middlware.js")
 
-
+// Create Authors
 router.post("/authors",authorController.createAuthor)
+// Create Blogs
 router.post("/blog",midd.authenticate,blogController.createBlog)
+// Get blogs
 router.get("/getAllBlog",midd.authenticate,blogController.getAllBlog)
+// Update Blogs by blog ID
 router.put("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.UpdateBlog)
-router.delete("/blogs/:blogId",midd.authenticate,blogController.deleteBlog)
-router.delete("/blogs",midd.authenticate,blogController.deleteBlogs)
+// Delete Blogs by blog ID
+router.delete("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.deleteBlog)
+// Delete Blogs by Query params
+router.delete("/blogs",midd.authenticate,midd.authorise,blogController.deleteBlogs)
+// Author Login
 router.post("/login",authorController.loginUser)
 
 

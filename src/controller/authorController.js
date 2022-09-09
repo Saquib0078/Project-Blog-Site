@@ -18,7 +18,7 @@ const createAuthor= async function (req,res){
     let savedData=await authorModel.create(data)
     res.status(201).send ({msg: savedData})
    }  else  {
-       return res.status(400).send({msg: "invalid request"}) }}
+       return res.status(400).send({msg: "Input is missing"}) }}
     catch (error){
         res.status(500).send(error.message)
     }
@@ -42,7 +42,7 @@ const loginUser = async function(req,res){
       let password = data.password
       //Going to authormodel and checking inside the database that if email and password exists
       let validUser = await authorModel.findOne({email:UserId, password:password})
-      if(!validUser) return res.status(400).send({msg:"email and password is requires"})
+      if(!validUser) return res.status(400).send({msg:"Incorrect Email or Password"})
        if(Object.keys(validUser).length != 0){
         // using Jwt package and creating the unique token with secret key
           let token = jwt.sign({authorId: validUser._id.toString()},"blog-site-project-01")
