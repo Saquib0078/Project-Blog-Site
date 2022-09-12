@@ -16,7 +16,7 @@ const createAuthor= async function (req,res){
     if(!validateEmail)  return res.status(400).send({msg: "Email is required"})
     // creating new author in database
     let savedData=await authorModel.create(data)
-    res.status(201).send ({data: savedData})
+    res.status(201).send ({status:true,data: savedData})
    }  else  {
        return res.status(400).send({msg: "Input is missing"}) }}
     catch (error){

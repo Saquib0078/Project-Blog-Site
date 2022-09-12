@@ -13,17 +13,17 @@ const createBlog = async function (req, res) {
 
          //if no author id present in request body
       if (!authorId)
-        return res.status(400).send({ msg: "authorId is required" });
+        return res.status(400).send({status:false, msg: "authorId is required" });
       else {
         //Executes when objectId is valid but author not found
         let validAuthor = await authorModel.findOne({ _id: authorId }); 
-        if (!validAuthor) return res.status(400).send({ msg: " authorId is not valid" });
+        if (!validAuthor) return res.status(400).send({ status:false,msg: " authorId is not valid" });
       }
      
       let savedData = await blogModel.create(data);
       res.status(201).send({ msg: savedData });
     } else {
-      return res.status(404).send({ msg: "Input is missing" });
+      return res.status(404).send({status:false, msg: "Input is missing" });
     }
   } catch (error) {
     res.status(500).send( error);
@@ -38,10 +38,10 @@ let getAllBlog = async function (req, res) {
     let data = req.query;
     // finding the values in Db and populating document with author details
     let getBlogs = await blogModel.find({ isPublished: true, isDeleted: false, ...data }).populate("authorId");
-    res.status(201).send({ data: getBlogs });
+    res.status(201).send({status:true, data: getBlogs });
     //checking if we are getting some documents from the database in response
     if (getBlogs.length == 0)
-      return res.status(404).send({ msg: "no such blog exist" });
+      return res.status(404).send({ status:false,msg: "no such blog exist" });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -71,7 +71,7 @@ let UpdateBlog = async function (req, res) {
        return res.status(201).send({ status: true, data: updatedBlog });
       
     } else {
-      return res.status(404).send({ msg: "Input is missing" });
+      return res.status(404).send({ status:false,msg: "Input is missing" });
     }
   } catch (error) {
     return res.status(500).send(error.message);
