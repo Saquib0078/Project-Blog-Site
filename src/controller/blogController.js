@@ -38,7 +38,7 @@ let getAllBlog = async function (req, res) {
     let data = req.query;
     // finding the values in Db and populating document with author details
     let getBlogs = await blogModel.find({ isPublished: true, isDeleted: false, ...data }).populate("authorId");
-    res.status(201).send({ msg: getBlogs });
+    res.status(201).send({ data: getBlogs });
     //checking if we are getting some documents from the database in response
     if (getBlogs.length == 0)
       return res.status(404).send({ msg: "no such blog exist" });
@@ -68,10 +68,10 @@ let UpdateBlog = async function (req, res) {
           new: true,
 
         });
-       return res.status(200).send({ status: true, msg: updatedBlog });
+       return res.status(201).send({ status: true, data: updatedBlog });
       
     } else {
-      return res.status(400).send({ msg: "Input is missing" });
+      return res.status(404).send({ msg: "Input is missing" });
     }
   } catch (error) {
     return res.status(500).send(error.message);
@@ -94,7 +94,7 @@ let deleteBlog = async function (req, res) {
       { _id: blogId },
       { isDeleted: true, isPublished: false, deletedAt: timestamps }
     );
-    res.status(200).send({ status: true, msg: "blog Deleted successfully" });
+    res.status(201).send({ status: true, msg: "blog Deleted successfully" });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -105,13 +105,12 @@ let deleteBlog = async function (req, res) {
 let deleteBlogs = async function (req, res) {
   try {
     const queryParams = req.query;
-  
     if (Object.keys(queryParams).length == 0)
         return res.status(400).send({ status: false, msg: "Input is missing" });
 
   
     const updatedBlog = await blogModel.updateMany(queryParams, { $set: { isDeleted: true, isPublished: false } }, { new: true });
-    return res.status(200).send({ status: true, data: updatedBlog })
+    return res.status(201).send({ status: true, data: updatedBlog })
 }
 catch (error) {
      res.status(500).send(error.message)
