@@ -4,29 +4,30 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const bookSchema = new mongoose.Schema({
     title: {
         type: String,
-        required:true,
+        required:"title is required",
         trim: true
     },
     body: {
         type: String,
-        required: true,
+        required: "body is required",
         trim: true
     },
     authorId: {
         type: ObjectId,
         ref: "NewAuthor",
-        required: true
+        required: "author is required",
+        trim:true
     },
 
     tags: [String],
     category: {
         type: String,
-        required: true,
+        required:"category is required",
         trim: true
     },
     subcategory: {
         type: [String],
-        required: true,
+        required: "category is required",
         trim: true
     },
 
@@ -43,12 +44,12 @@ const bookSchema = new mongoose.Schema({
     },
     publishedAt: {
         type: Date,
-        default: Date.now,
+        default: null,
         trim: true
     },
     isPublished: {
-        type: Boolean
-        , default: false,
+        type: Boolean,
+         default: false,
         trim: true
     },
 

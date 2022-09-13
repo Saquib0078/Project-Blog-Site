@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
-const BlogModel = require('../models/BlogModel');
+const mongoose = require('mongoose');
+const blogModel = require('../models/BlogModel');
+
 
 //--------------------AUTHENTICATION------------------------------------
 
@@ -22,8 +24,9 @@ const authenticate = async function(req,res,next){
 const authorise = async function (req,res,next){
     try{
         const blogId = req.params["blogId"];
+        
         const decodedToken = req.decodedToken;
-        const blogByBlogId = await BlogModel.findOne({_id: blogId,isDeleted: false,deletedAt: null,});
+        const blogByBlogId = await blogModel.findOne({_id: blogId,isDeleted: false,deletedAt: null,});
         if(!blogByBlogId){ return res.status(404).send({status:false, message:`no blogs found by blogId`});}
         if(decodedToken.authorId != blogByBlogId.authorId){
             return res.status(403).send({status:false , message:"unauthorize access"});
