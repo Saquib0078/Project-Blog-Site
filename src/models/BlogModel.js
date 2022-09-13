@@ -4,7 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const bookSchema = new mongoose.Schema({
     title: {
         type: String,
-        enum: ["Mr", "Mrs", "Miss"],
+        required:true,
         trim: true
     },
     body: {

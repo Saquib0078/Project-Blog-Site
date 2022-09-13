@@ -16,11 +16,6 @@ const isValidTitle = function(title){
 const isVAlidRequestBody = function(requestBody){
   return Object.keys(requestBody).length > 0
 }
-
-
-
-
-
 // create author ---------------------------------------
 const createAuthor= async function (req,res){
     try {
@@ -123,5 +118,3 @@ const loginUser = async function(req,res){
 // ------------------- EXPORTING MODULE TO ROUTE.JS -----------------------------------------------------
 module.exports.createAuthor=createAuthor
 module.exports.loginUser = loginUser
-
-

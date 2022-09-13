@@ -8,15 +8,15 @@ const midd = require("../middlwares/middlware.js")
 // Create Authors
 router.post("/authors",authorController.createAuthor)
 // Create Blogs
-router.post("/blog",midd.authenticate,blogController.createBlog)
+router.post("/blogs",midd.authenticate,blogController.createBlog)
 // Get blogs
-router.get("/getAllBlog",midd.authenticate,blogController.getAllBlog)
+router.get("/blogs",midd.authenticate,blogController.getAllBlog)
 // Update Blogs by blog ID
 router.put("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.UpdateBlog)
 // Delete Blogs by blog ID
 router.delete("/blogs/:blogId",midd.authenticate,midd.authorise,blogController.deleteBlog)
 // Delete Blogs by Query params
-router.delete("/blogs",midd.authenticate,midd.authorise,blogController.deleteBlogs)
+router.delete("/blogs",midd.authenticate,blogController.deleteBlogs)
 // Author Login
 router.post("/login",authorController.loginUser)
 
